@@ -1,0 +1,14 @@
+.table {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: left;
+  text-align: left;
+  padding: 8px;
+}
+
+.table > .col {
+  font-size: 20px;
+  font-weight: bold;
+  background-color: rgb(188, 240, 188);
+  border-bottom: 1px solid green;
+}

@@ -21,9 +21,11 @@ Projekto paleidimui yra reikalinga [AMPPS](https://ampps.com/).
 - MySQL
 
 ### TODOS
-- [ ] Sukurti duomenų bazę
-- [ ] Sudaryti duomenų bazės struktūrą ir sukurti lenteles
-- [ ] Ranka užpildyti lenteles
+- [x] Sukurti duomenų bazę
+- [x] Sudaryti duomenų bazės struktūrą ir sukurti lenteles
+- [x] Ranka užpildyti lenteles
+- [x] Sukurti turimų duomenų atvaizdavimą
+- [ ] Papildyti duomenų atvaizdavimą susiejant darbuotojus ir projektus
 - [ ] Padaryti darbuotojų talpinimą iš frontend
 - [ ] Padaryti darbuotojų trynimą iš frontend
 - [ ] Padaryti darbuotojų redagavimą iš frontend
