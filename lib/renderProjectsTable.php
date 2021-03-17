@@ -1,8 +1,9 @@
 <?php
 
-function renderProjectRow($project)
+function renderProjectRow($project, $count)
 {
-  echo "<div>{$project['pid']}</div>";
+  echo "<div>{$count}</div>";
   echo "<div>{$project['name']}</div>";
-  echo "<div>Emploees...</div>";
+  echo "<div>{$project['fullnames']}</div>";
+  echo "<div>Delete Update</div>";
 }

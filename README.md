@@ -25,13 +25,14 @@ Projekto paleidimui yra reikalinga [AMPPS](https://ampps.com/).
 - [x] Sudaryti duomenų bazės struktūrą ir sukurti lenteles
 - [x] Ranka užpildyti lenteles
 - [x] Sukurti turimų duomenų atvaizdavimą
-- [ ] Papildyti duomenų atvaizdavimą susiejant darbuotojus ir projektus
-- [ ] Padaryti darbuotojų talpinimą iš frontend
-- [ ] Padaryti darbuotojų trynimą iš frontend
-- [ ] Padaryti darbuotojų redagavimą iš frontend
+- [x] Papildyti duomenų atvaizdavimą susiejant darbuotojus ir projektus
+- [x] Padaryti darbuotojų talpinimą iš frontend
+- [x] Padaryti darbuotojų trynimą iš frontend
+- [x] Padaryti darbuotojų redagavimą iš frontend
 - [ ] Padaryti projektų talpinimą iš frontend
 - [ ] Padaryti projektų trynimą iš frontend
 - [ ] Padaryti projektų redagavimą iš frontend
+- [ ] Clean up, refactor and prettify`
 
 
 ## Author

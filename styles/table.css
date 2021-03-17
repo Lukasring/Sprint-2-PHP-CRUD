@@ -1,6 +1,6 @@
 .table {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 4fr 4fr 4fr;
   justify-content: left;
   text-align: left;
   padding: 8px;
