@@ -9,6 +9,7 @@ $dbName = 'sprint2';
 
 function connectToDb($servername, $username, $password, $dbName)
 {
+
   $conn = mysqli_connect($servername, $username, $password, $dbName); // Create connection
 
   if (!$conn) {
