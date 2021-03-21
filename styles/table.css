@@ -3,7 +3,6 @@
   grid-template-columns: 1fr 4fr 4fr 4fr;
   justify-content: left;
   text-align: left;
-  padding: 8px;
 }
 
 .table > .col {
@@ -11,4 +10,19 @@
   font-weight: bold;
   background-color: rgb(188, 240, 188);
   border-bottom: 1px solid green;
+}
+
+.table.employee {
+  grid-template-columns: 1fr 5fr 5fr 3fr;
+}
+
+.table > div {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid green;
+}
+
+.table .btn {
+  margin: 0 4px;
 }

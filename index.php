@@ -10,46 +10,115 @@
 </head>
 
 <body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="./">Employees</a></li>
+        <li><a href="?path=projects">Projects</a></li>
+      </ul>
+    </nav>
+    <div>EMPLOYEE & PROJECTS MANAGER</div>
+  </header>
   <main>
     <?php
     require('./db.php');
-    require('./lib/delete.php');
 
-    if (isset($_POST['delete'])) {
-      $stmt = $conn->prepare("DELETE FROM emploees WHERE id=?");
-      $stmt->bind_param("i", $id);
-      $table = $_POST['table'];
-      $id = $_POST['id'];
-      $stmt->execute();
+    $conn = connectToDb('localhost', 'root', 'mysql', 'sprint2');
+
+    if (isset($_POST['delete']) && $_POST['table'] == 'employees') {
+      deleteFromTable($conn, 'employees', $_POST['id']);
     }
-    if (isset($_POST['new-emp'])) {
-      $stmt = $conn->prepare("INSERT INTO emploees (firstname, lastname, pid) VALUES (?, ?, ?)");
-      $stmt->bind_param("ssi", $firstname, $lastname, $pid);
+    if (isset($_POST['delete']) && $_POST['table'] == 'projects') {
+      deleteProject($conn, $_POST['pid']);
+    }
+    if (isset($_POST['new-emp']) && !empty($_POST['firstname']) && !empty($lastname = $_POST['lastname'])) {
       $firstname = $_POST['firstname'];
       $lastname = $_POST['lastname'];
       $pid = $_POST['project-id'] === '' ? null : $_POST['project-id'];
-      $stmt->execute();
+      addNewEmployee($conn, $firstname, $lastname, $pid);
     }
-    if (isset($_POST['update-emp'])) {
-      $stmt = $conn->prepare("UPDATE emploees SET `firstname`=?, `lastname`=?, `pid`=? WHERE `id`=?");
-      $stmt->bind_param("ssii", $firstname, $lastname, $pid, $eid);
+    if (isset($_POST['new-project']) && !empty($_POST['name'])) {
+      $name = $_POST['name'];
+      addNewProject($conn, $name);
+    }
+    if (isset($_POST['update-emp']) && !empty($_POST['firstname']) && !empty($lastname = $_POST['lastname'])) {
       $firstname = $_POST['firstname'];
       $lastname = $_POST['lastname'];
       $pid = $_POST['project-id'] === '' ? null : $_POST['project-id'];
       $eid = $_POST['employee-id'];
-      $stmt->execute();
+      updateEmployee($conn, $firstname, $lastname, $pid, $eid);
     }
+    if (isset($_POST['update-project']) && !empty($_POST['name'])) {
+      $name = $_POST['name'];
+      $pid = $_POST['pid'];
+      updateProject($conn, $name, $pid);
+    }
+
     ?>
-    <div class="table">
-      <div class="col">ID</div>
-      <div class="col">Name</div>
-      <div class="col">Projects</div>
-      <div class="col">Actions</div>
-      <?php
-      $query = "SELECT emploees.id, emploees.firstname, emploees.lastname, projects.`name` FROM emploees
-      LEFT JOIN projects ON emploees.pid = projects.pid";
+
+    <?php
+    if (isset($_GET['path']) && $_GET['path'] == 'projects') {
+      // Iki else renderina projektu lentele
+      require('./lib/renderProjectsTable.php');
+
+      echo "<div class='table projects'>";
+      echo "<div class='col'>ID</div>";
+      echo "<div class='col'>Name</div>";
+      echo "<div class='col'>Employees</div>";
+      echo "<div class='col'>Actions</div>";
+
+      $query = "SELECT projects.`pid`, projects.`name`, 
+      GROUP_CONCAT(CONCAT_WS(\" \", employees.firstname, employees.lastname) separator \", \") 
+      as fullnames FROM projects
+      LEFT JOIN employees
+      ON projects.pid = employees.pid
+      GROUP BY projects.pid";
+
       $result = mysqli_query($conn, $query);
+      if (mysqli_num_rows($result) > 0) {
+        $count = 1;
+        while ($row = mysqli_fetch_assoc($result)) {
+          renderProjectRow($row, $count);
+          $count++;
+        }
+        mysqli_free_result($result);
+      } else {
+        echo "No Projects";
+      }
+      echo "</div>";
+
+
+      $defaultProjectName = '';
+      $defaultProjectId = '';
+      $formName = 'new-project';
+      $formTitle = 'Add New Project';
+
+      if (isset($_POST['update'])) {
+        $defaultProjectName = $_POST['name'];
+        $defaultProjectId = $_POST['pid'];
+        $formName = 'update-project';
+        $formTitle = 'Update Project Name';
+      }
+      echo "<form id='employee-form' action='' method='POST' class='form employee'>";
+      echo "<h2>{$formTitle}</h2>";
+      echo "<label for='name'>Project name*</label>";
+      echo "<input type='text' id='name' name='name' placeholder='Project Name' value='{$defaultProjectName}'>";
+      echo "<button type='submit' name={$formName} class='btn'>Submit</button>";
+      echo "<input type='hidden' name='pid' value='$defaultProjectId'>";
+      echo "</form>";
+    } else {
+      // cia renderina darbuotoju lentele ir forma
       require('./lib/renderEmploeeTable.php');
+
+      echo "<div class='table employee'>";
+      echo "<div class='col'>ID</div>";
+      echo "<div class='col'>Name</div>";
+      echo "<div class='col'>Projects</div>";
+      echo "<div class='col'>Actions</div>";
+
+      $query = "SELECT employees.id, employees.firstname, employees.lastname, projects.`name`, projects.`pid` FROM employees
+      LEFT JOIN projects ON employees.pid = projects.pid";
+      $result = mysqli_query($conn, $query);
       if (mysqli_num_rows($result) > 0) {
         $count = 1;
         while ($row = mysqli_fetch_assoc($result)) {
@@ -60,83 +129,52 @@
       } else {
         echo "0 results";
       }
-      ?>
-    </div>
-    <div>
-      <?php
 
-      ?>
-    </div>
-    <!-- <div class="table">
-      <div class="col">ID</div>
-      <div class="col">Name</div>
-      <div class="col">Emploees</div>
-      <?php
-      // include('./lib/renderProjectsTable.php');
-      // $query = "SELECT * FROM projects";
-      // $result = mysqli_query($conn, $query);
-      // if (mysqli_num_rows($result) > 0) {
-      //   while ($row = mysqli_fetch_assoc($result)) {
-      //     renderProjectRow($row);
-      //   }
-      //   mysqli_free_result($result);
-      // } else {
-      //   echo "0 results";
-      // }
-      ?>
-    </div> -->
+      echo "</div>";
 
-    <?php
-    $defaultFirstname = '';
-    $defaultLastname = '';
-    $defaultEmployeeId = null;
-    $defaultProjectId = '';
-    $formName = 'new-emp';
+      $defaultFirstname = '';
+      $defaultLastname = '';
+      $defaultEmployeeId = null;
+      $defaultProjectId = '';
+      $formName = 'new-emp';
+      $formTitle = 'Add New Employee';
 
-    if (isset($_POST['update'])) {
-      // $stmt = $conn->prepare("INSERT INTO emploees (firstname, lastname, pid) VALUES (?, ?, ?)");
-      // $stmt->bind_param("ssi", $firstname, $lastname, $pid);
-      // $firstname = $_POST['firstname'];
-      // $lastname = $_POST['lastname'];
-      // $pid = $_POST['project-id'] === '' ? null : $_POST['project-id'];
-      // $stmt->execute();
-      $defaultFirstname = $_POST['firstname'];
-      $defaultLastname = $_POST['lastname'];
-      $defaultEmployeeId = $_POST['id'];
+      if (isset($_POST['update'])) {
+        $defaultFirstname = $_POST['firstname'];
+        $defaultLastname = $_POST['lastname'];
+        $defaultEmployeeId = $_POST['id'];
+        $defaultProjectId = $_POST['pid'];
 
-      $formName = 'update-emp';
+        $formName = 'update-emp';
+        $formTitle = 'Update Employee Info';
+      }
 
-      // $defaultProjectId = $_POST['id'];
+      $query = "SELECT projects.`pid`, projects.`name` FROM projects";
+      $result = mysqli_query($conn, $query);
+
+      echo "<form id='employee-form' action='' method='POST' class='form employee'>";
+      echo "<h2>{$formTitle}</h2>";
+      echo "<label for='firstname'>First name*</label>";
+      echo "<input type='text' id='firstname' name='firstname' placeholder='firstname' value='{$defaultFirstname}' required>";
+      echo "<label for='lastname'>Last name*</label>";
+      echo "<input type='text' id='lastname' name='lastname' placeholder='lastname' value='{$defaultLastname}' required> ";
+      echo "<label for='project'>Project</label>";
+      echo "<select id='project-id' name='project-id'>";
+      echo "<option value='' " . ($defaultProjectId == '' ? 'selected' : '') . ">None</option>";
+      if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+          echo "<option value={$row['pid']} " . ($defaultProjectId == $row['pid'] ? 'selected' : '') . ">{$row['name']}</option>";
+        }
+        mysqli_free_result($result);
+      }
+      echo "</select>";
+      echo "<button type='submit' name={$formName} class='btn'>Submit</button>";
+      echo "<input type='hidden' name='employee-id' value='$defaultEmployeeId'>";
+      echo "</form>";
     }
 
-    echo "<form id='employee-form' action='' method='POST'>";
-    echo "<label for='firstname'>First name</label>";
-    echo "<input type='text' id='firstname' name='firstname' placeholder='firstname' value={$defaultFirstname}>";
-    echo "<label for='lastname'>Last name</label>";
-    echo "<input type='text' id='lastname' name='lastname' placeholder='lastname' value={$defaultLastname}>";
-    echo "<label for='project'>Project</label>";
-    echo "<select id='project-id' name='project-id'>";
-    echo "<option value='' " . ($defaultProjectId == '' ? 'selected' : '') . ">None</option>";
-    echo "<option value='1'" . ($defaultProjectId == '1' ? 'selected' : '') . ">Project 1</option>";
-    echo "<option value='2'" . ($defaultProjectId == '2' ? 'selected' : '') . ">Project 2</option>";
-    echo "</select>";
-    echo "<button type='submit' name={$formName}>Submit</button>";
-    echo "<input type='hidden' name='employee-id' value='$defaultEmployeeId'>";
-    echo "</form>";
+
     ?>
-    <!-- <form id="employee-form" action='' method="POST">
-      <label for="firstname">First name</label>
-      <input type="text" id="firstname" name="firstname" placeholder="firstname" value="">
-      <label for="lastname">Last name</label>
-      <input type="text" id="lastname" name="lastname" placeholder="lastname">
-      <label for="project">Project</label>
-      <select id="project-id" name="project-id">
-        <option value=''>None</option>
-        <option value="1">Project 1</option>
-        <option value="2">Project 2</option>
-      </select>
-      <button type="submit" name="employee">Submit</button>
-    </form> -->
 
   </main>
   <?php

@@ -9,3 +9,81 @@ main {
   padding: 16px;
   margin: auto;
 }
+
+header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 16px;
+  align-items: center;
+  background: #3c6300;
+  color: #fff;
+}
+
+nav > ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
+
+li > a {
+  text-decoration: none;
+  padding: 16px;
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.1s ease-out;
+}
+
+li > a:hover {
+  background: #5a7d25;
+}
+
+.btn {
+  outline: none;
+  padding: 4px 8px;
+  border: 1px solid green;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease-out;
+}
+
+.btn:hover {
+  background: rgb(188, 240, 188);
+}
+
+.btn.delete {
+  border: 1px solid rgb(170, 0, 0);
+}
+
+.btn.delete:hover {
+  background: rgb(253, 87, 87);
+  color: white;
+}
+
+.form {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.form.employee {
+  margin-top: 32px;
+  width: 50%;
+}
+.form.employee h2 {
+  width: 100%;
+  text-align: center;
+}
+
+.form.employee input,
+.form.employee label {
+  width: 100%;
+}
+
+.form.employee .btn {
+  margin: auto;
+}
